@@ -1,0 +1,56 @@
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  /* Background layers */
+  --bg:        #09090b;
+  --surface:   #0f0f12;
+  --surface-2: #161619;
+  --surface-3: #1d1d22;
+
+  /* Borders */
+  --border:   #27272a;
+  --border-2: #3f3f46;
+
+  /* Text */
+  --text-1: #fafafa;
+  --text-2: #a1a1aa;
+  --text-3: #52525b;
+
+  /* Accent — indigo */
+  --accent:     #6366f1;
+  --accent-dim: rgba(99, 102, 241, 0.1);
+  --accent-glow: rgba(99, 102, 241, 0.18);
+
+  /* Status colours */
+  --green:      #22c55e;
+  --green-dim:  rgba(34, 197, 94, 0.1);
+  --amber:      #f59e0b;
+  --amber-dim:  rgba(245, 158, 11, 0.1);
+  --purple:     #a855f7;
+  --purple-dim: rgba(168, 85, 247, 0.1);
+  --cyan:       #22d3ee;
+  --red:        #ef4444;
+  --red-dim:    rgba(239, 68, 68, 0.1);
+
+  /* Radii */
+  --r-sm: 4px;
+  --r:    8px;
+  --r-lg: 12px;
+  --r-xl: 16px;
+
+  /* Fonts */
+  font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-1);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+}
+
+body { min-height: 100dvh; }
+h1, h2, h3, h4 { font-weight: 600; line-height: 1.3; letter-spacing: -0.01em; }
+p { line-height: 1.65; }
+button { font-family: inherit; cursor: pointer; border: none; background: none; }
+input { font-family: inherit; }
