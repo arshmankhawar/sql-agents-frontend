@@ -7,10 +7,12 @@ import type {
   SSETask,
   TaskStatus,
 } from '../types'
+import { useAuth } from '../auth/AuthContext'
 
 const API_BASE = import.meta.env.VITE_API_URL ?? ''
 
 export function useSSEQuery() {
+  const { authHeaders, logout } = useAuth()
   const [isLoading, setIsLoading] = useState(false)
   const [phase, setPhase] = useState<Phase>('idle')
   const [tasks, setTasks] = useState<SSETask[]>([])
@@ -45,11 +47,15 @@ export function useSSEQuery() {
       try {
         const response = await fetch(`${API_BASE}/api/v1/query`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 'Content-Type': 'application/json', ...authHeaders() },
           body: JSON.stringify({ query }),
           signal: controller.signal,
         })
 
+        if (response.status === 401) {
+          logout()
+          throw new Error('Session expired — please sign in again')
+        }
         if (!response.ok) {
           throw new Error(`HTTP ${response.status}: ${response.statusText}`)
         }
@@ -134,7 +140,7 @@ export function useSSEQuery() {
         }
       }
     },
-    [reset]
+    [reset, authHeaders, logout]
   )
 
   return {

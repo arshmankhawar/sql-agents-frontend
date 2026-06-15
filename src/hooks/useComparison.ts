@@ -1,9 +1,11 @@
 import { useCallback, useRef, useState } from 'react'
 import type { CompareMode, ComparePhase, ComparisonResult } from '../types'
+import { useAuth } from '../auth/AuthContext'
 
 const API_BASE = import.meta.env.VITE_API_URL ?? ''
 
 export function useComparison() {
+  const { authHeaders, logout } = useAuth()
   const [isRunning, setIsRunning] = useState(false)
   const [phase, setPhase] = useState<ComparePhase>('idle')
   const [statusMessage, setStatusMessage] = useState('')
@@ -39,11 +41,15 @@ export function useComparison() {
       try {
         const response = await fetch(`${API_BASE}/api/v1/compare`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 'Content-Type': 'application/json', ...authHeaders() },
           body: JSON.stringify({ query, mode }),
           signal: controller.signal,
         })
 
+        if (response.status === 401) {
+          logout()
+          throw new Error('Session expired — please sign in again')
+        }
         if (!response.ok) throw new Error(`HTTP ${response.status}: ${response.statusText}`)
         if (!response.body) throw new Error('No response body')
 
@@ -92,7 +98,7 @@ export function useComparison() {
         }
       }
     },
-    [cancel]
+    [cancel, authHeaders, logout]
   )
 
   return { isRunning, phase, statusMessage, step, totalSteps, result, error, run, cancel }
