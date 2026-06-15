@@ -1,0 +1,29 @@
+# SQL Analytics — Multi-agent pipeline
+
+> A multi-agent application that turns a natural-language question into
+> cross-domain database insights. A planner decomposes the request, parallel
+> SQL agents fetch raw rows, derived agents compute aggregations in Python, and
+> a synthesis agent returns a plain-English answer with specific numbers.
+> Progress streams live to the browser over Server-Sent Events (SSE).
+
+## What it does
+
+- Accepts a free-text analytics request (e.g. "Compare average salaries
+  between tech_startup and airport").
+- Plans a DAG of tasks across three domains: airport, tech_startup, restaurant.
+- Executes SQL, derived (group-by / ranking / growth) and plot tasks, then
+  synthesises a natural-language summary.
+- Visualises results and shows pipeline timing and deduplication stats.
+
+## Architecture
+
+- Frontend: React + Vite single-page app (this site).
+- Backend: FastAPI streaming API at `/api/v1` (SSE).
+- Coordination: a Blackboard pattern deduplicates identical SQL across agents.
+- Schema retrieval: FAISS semantic search over table/column descriptions.
+
+## Notes for crawlers and assistants
+
+- The API under `/api/` is a machine interface, not user-facing content; it is
+  disallowed in robots.txt.
+- The primary entry point is the site root: https://arshman.techquest.ai/
