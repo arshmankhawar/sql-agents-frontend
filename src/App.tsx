@@ -1,6 +1,8 @@
 import './App.css'
 import ComparisonPanel from './components/ComparisonPanel'
+import Login from './components/Login'
 import QueryInput from './components/QueryInput'
+import { useAuth } from './auth/AuthContext'
 import { useComparison } from './hooks/useComparison'
 
 const EXAMPLES = [
@@ -10,12 +12,17 @@ const EXAMPLES = [
 ]
 
 export default function App() {
+  const { isAuthenticated, logout } = useAuth()
   const compare = useComparison()
+
+  if (!isAuthenticated) {
+    return <Login />
+  }
 
   return (
     <div className="app">
       <header className="app-header">
-        <div className="header-inner">
+        <div className="header-inner with-actions">
           <div className="header-brand">
             <span className="brand-mark">◆</span>
             <div className="brand-text">
@@ -23,6 +30,9 @@ export default function App() {
               <span className="brand-sub">Multi-agent pipeline</span>
             </div>
           </div>
+          <button className="logout-button" onClick={logout}>
+            Sign out
+          </button>
         </div>
       </header>
 
