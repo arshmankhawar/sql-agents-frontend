@@ -1,10 +1,9 @@
 # DEPLOYMENT.md — Frontend (sql-agents-frontend)
 
-> **For the Claude Code deployment session:** Read this file fully before acting. It covers
-> deploying this React/Vite frontend to DigitalOcean and the project-specific gotchas that
-> are NOT obvious from the code. The user is new to deployment — explain as you go and confirm
-> before incurring cost. Deploy the **backend first** (see DEPLOYMENT.md in `sql-agents-backend`)
-> because the frontend needs the backend's public URL at build time.
+> **Read this file fully before deploying.** It covers deploying this React/Vite frontend
+> to DigitalOcean and the project-specific gotchas that are NOT obvious from the code.
+> Deploy the **backend first** (see DEPLOYMENT.md in `sql-agents-backend`) because the
+> frontend needs the backend's public URL at build time.
 
 ---
 
