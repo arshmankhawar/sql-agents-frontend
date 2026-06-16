@@ -1,6 +1,7 @@
 import { useCallback, useRef, useState } from 'react'
 import type {
   ChartPayload,
+  DocumentSource,
   Phase,
   PipelineStats,
   SSEEvent,
@@ -19,6 +20,7 @@ export function useSSEQuery() {
   const [taskStatuses, setTaskStatuses] = useState<Record<string, TaskStatus>>({})
   const [answer, setAnswer] = useState<string | null>(null)
   const [charts, setCharts] = useState<ChartPayload[]>([])
+  const [sources, setSources] = useState<DocumentSource[]>([])
   const [stats, setStats] = useState<PipelineStats | null>(null)
   const [error, setError] = useState<string | null>(null)
   const abortRef = useRef<AbortController | null>(null)
@@ -31,6 +33,7 @@ export function useSSEQuery() {
     setTaskStatuses({})
     setAnswer(null)
     setCharts([])
+    setSources([])
     setStats(null)
     setError(null)
   }, [])
@@ -119,6 +122,7 @@ export function useSSEQuery() {
               case 'synthesis_complete':
                 setAnswer(ev.answer)
                 setCharts(ev.charts)
+                setSources(ev.sources ?? [])
                 setStats(ev.stats)
                 setPhase('done')
                 setIsLoading(false)
@@ -150,6 +154,7 @@ export function useSSEQuery() {
     taskStatuses,
     answer,
     charts,
+    sources,
     stats,
     error,
     submit,

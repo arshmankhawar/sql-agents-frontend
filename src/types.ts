@@ -75,11 +75,38 @@ export interface PipelineStats {
   cache_hits: number
 }
 
+export interface DocumentSource {
+  filename: string
+  text: string
+  score: number
+}
+
 export interface SynthesisCompleteEvent extends BaseEvent {
   event: 'synthesis_complete'
   answer: string
   charts: ChartPayload[]
+  sources?: DocumentSource[]
   stats: PipelineStats
+}
+
+// ── Upload types ──────────────────────────────────────────────────────────────
+
+export interface UploadedDataset {
+  name: string
+  table_name: string
+  row_count: number
+  filename: string | null
+  description: string | null
+  created_at: string
+}
+
+export interface UploadedDocument {
+  id: number
+  filename: string
+  description: string | null
+  file_type: string | null
+  chunk_count: number
+  created_at: string
 }
 
 export interface ErrorEvent extends BaseEvent {
