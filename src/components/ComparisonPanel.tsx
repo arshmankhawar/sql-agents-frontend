@@ -144,9 +144,12 @@ export default function ComparisonPanel({
       )}
       {phase === 'done' && result && <ResultDisplay result={result} />}
       {phase === 'error' && error && (
-        <div className="error-banner">
-          <span className="error-icon">⚠</span>
-          <span>{error}</span>
+        <div className="error-card">
+          <div className="error-card-icon">!</div>
+          <div className="error-card-body">
+            <span className="error-card-title">Request failed</span>
+            <span className="error-card-message">{error}</span>
+          </div>
         </div>
       )}
     </div>
