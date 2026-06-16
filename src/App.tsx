@@ -1,7 +1,9 @@
+import { useState } from 'react'
 import './App.css'
 import ComparisonPanel from './components/ComparisonPanel'
 import Login from './components/Login'
 import QueryInput from './components/QueryInput'
+import UploadPanel from './components/UploadPanel'
 import { useAuth } from './auth/AuthContext'
 import { useComparison } from './hooks/useComparison'
 
@@ -14,6 +16,7 @@ const EXAMPLES = [
 export default function App() {
   const { isAuthenticated, logout } = useAuth()
   const compare = useComparison()
+  const [showUpload, setShowUpload] = useState(false)
 
   if (!isAuthenticated) {
     return <Login />
@@ -30,11 +33,18 @@ export default function App() {
               <span className="brand-sub">Multi-agent pipeline</span>
             </div>
           </div>
-          <button className="logout-button" onClick={logout}>
-            Sign out
-          </button>
+          <div className="header-actions">
+            <button className="upload-button" onClick={() => setShowUpload(true)}>
+              Upload data
+            </button>
+            <button className="logout-button" onClick={logout}>
+              Sign out
+            </button>
+          </div>
         </div>
       </header>
+
+      {showUpload && <UploadPanel onClose={() => setShowUpload(false)} />}
 
       <main className="app-main">
         <QueryInput

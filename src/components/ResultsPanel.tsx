@@ -1,15 +1,31 @@
-import type { PipelineStats } from '../types'
+import type { DocumentSource, PipelineStats } from '../types'
 
 interface Props {
   answer: string
   stats: PipelineStats | null
+  sources?: DocumentSource[]
 }
 
-export default function ResultsPanel({ answer, stats }: Props) {
+export default function ResultsPanel({ answer, stats, sources }: Props) {
   return (
     <div className="results-panel">
       <div className="results-label">Answer</div>
       <p className="results-answer">{answer}</p>
+
+      {sources && sources.length > 0 && (
+        <div className="source-cards">
+          <div className="source-cards-label">Sources from your documents</div>
+          {sources.map((s, i) => (
+            <div key={i} className="source-card">
+              <div className="source-card-head">
+                <span className="source-card-file">{s.filename}</span>
+                <span className="source-card-score">{(s.score * 100).toFixed(0)}% match</span>
+              </div>
+              <p className="source-card-text">{s.text}</p>
+            </div>
+          ))}
+        </div>
+      )}
 
       {stats && (
         <div className="results-meta">
