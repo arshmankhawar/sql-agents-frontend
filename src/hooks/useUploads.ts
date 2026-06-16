@@ -20,26 +20,56 @@ export function useUploads() {
   const [documents, setDocuments] = useState<UploadedDocument[]>([])
   const [busy, setBusy] = useState(false)
 
-  const refresh = useCallback(async () => {
-    try {
-      const [dRes, fRes] = await Promise.all([
-        fetch(`${API_BASE}/api/v1/datasets`, { headers: { ...authHeaders() } }),
-        fetch(`${API_BASE}/api/v1/files`, { headers: { ...authHeaders() } }),
-      ])
-      if (dRes.status === 401 || fRes.status === 401) {
-        logout()
-        return
-      }
-      if (dRes.ok) setDatasets((await dRes.json()).datasets ?? [])
-      if (fRes.ok) setDocuments((await fRes.json()).documents ?? [])
-    } catch {
-      /* listing is best-effort; ignore transient errors */
+  // Fetch the current lists WITHOUT touching React state — callers decide when
+  // to commit the result. Keeping setState out of here lets both the mount
+  // effect and refresh() apply state after the await boundary.
+  const fetchLists = useCallback(async (): Promise<{
+    datasets: UploadedDataset[]
+    documents: UploadedDocument[]
+  } | null> => {
+    const [dRes, fRes] = await Promise.all([
+      fetch(`${API_BASE}/api/v1/datasets`, { headers: { ...authHeaders() } }),
+      fetch(`${API_BASE}/api/v1/files`, { headers: { ...authHeaders() } }),
+    ])
+    if (dRes.status === 401 || fRes.status === 401) {
+      logout()
+      return null
+    }
+    return {
+      datasets: dRes.ok ? (await dRes.json()).datasets ?? [] : [],
+      documents: fRes.ok ? (await fRes.json()).documents ?? [] : [],
     }
   }, [authHeaders, logout])
 
+  const refresh = useCallback(async () => {
+    try {
+      const lists = await fetchLists()
+      if (lists) {
+        setDatasets(lists.datasets)
+        setDocuments(lists.documents)
+      }
+    } catch {
+      /* listing is best-effort; ignore transient errors */
+    }
+  }, [fetchLists])
+
   useEffect(() => {
-    void refresh()
-  }, [refresh])
+    let cancelled = false
+    void (async () => {
+      try {
+        const lists = await fetchLists()
+        if (lists && !cancelled) {
+          setDatasets(lists.datasets)
+          setDocuments(lists.documents)
+        }
+      } catch {
+        /* best-effort on mount */
+      }
+    })()
+    return () => {
+      cancelled = true
+    }
+  }, [fetchLists])
 
   const post = useCallback(
     async (path: string, form: FormData): Promise<UploadResult> => {
